@@ -10,29 +10,29 @@ namespace BookAPI.Controllers
     [ApiController]
     public class BooksController : ControllerBase
     {
-        private readonly IBookRepository _bookRepository;
+        private readonly IBookRepository bookRepository;
 
         public BooksController(IBookRepository bookRepository)
         {
-            _bookRepository = bookRepository;
+            this.bookRepository = bookRepository;
+        }
+        
+        [HttpGet("{id}")]
+        public async Task<ActionResult<Books>> GetBooks(int id)
+        {
+            return await bookRepository.Get(id);
         }
 
         [HttpGet]
         public async Task<IEnumerable<Books>> GetBooks()
         {
-            return await _bookRepository.Get();
-        }
-
-        [HttpGet("{id}")]
-        public async Task<ActionResult<Books>> GetBooks(int id)
-        {
-            return await _bookRepository.Get(id);
+            return await bookRepository.Get();
         }
 
         [HttpPost]
         public async Task<ActionResult<Books>> PostBooks([FromBody] Books book)
         {
-            var newBook = await _bookRepository.Create(book);
+            var newBook = await bookRepository.Create(book);
             return CreatedAtAction(nameof(GetBooks), new { id = newBook.ID}, newBook);
         }
 
@@ -44,7 +44,7 @@ namespace BookAPI.Controllers
                 return BadRequest();
             }
 
-            await _bookRepository.Update(book);
+            await bookRepository.Update(book);
 
             return NoContent();
         }
@@ -52,11 +52,11 @@ namespace BookAPI.Controllers
         [HttpDelete("{id}")]
         public async Task<ActionResult> Delete(int id)
         {
-            var bookToDelete = await _bookRepository.Get(id);
+            var bookToDelete = await bookRepository.Get(id);
             if (bookToDelete == null)
                 return NotFound();
 
-            await _bookRepository.Delete(bookToDelete.ID);
+            await bookRepository.Delete(bookToDelete.ID);
             return NoContent();
         }
     }
