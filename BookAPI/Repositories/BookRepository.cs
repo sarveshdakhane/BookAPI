@@ -27,7 +27,6 @@ namespace BookAPI.Repositories
         {
             context.Books.Add(book);
             await context.SaveChangesAsync();
-
             return book;
         }
         public async Task Update(Books book)
